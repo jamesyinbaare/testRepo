@@ -10,21 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v3.6.0
       - name: Checkout code
-        uses: actions/checkout@v3.6.0
-
-      - name: Set up SSH key
-        uses: webfactory/ssh-agent@v0.8.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: SSH into EC2 and build Docker image
+        env:
+            PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+            HOSTNAME: ${{secrets.EC2_HOST}}
         run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'ENDSSH'
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no  private_key ec2-user@${{ secrets.EC2_HOST }} '
             cd ~/test-folder
             ls -la
-          ENDSSH
-          
+  
       - name: Copy code to EC2
-        run: scp -o StrictHostKeyChecking=no -r . ec2-user@${{ secrets.EC2_HOST }}:~/test-folder
+        run: scp -o StrictHostKeyChecking=no private_key -r . ec2-user@${{ secrets.EC2_HOST }}:~/test-folder
 
