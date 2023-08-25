@@ -6,21 +6,17 @@ on:
       - main
 
 jobs:
-  deploy:
+  Deploy:
+    name: Deploy to EC2
     runs-on: ubuntu-latest
-
+    
     steps:
-      - uses: actions/checkout@v3.6.0
-      - name: Checkout code
+      - uses: actions/checkout@v2 
+      - name: Build & Deploy
         env:
             PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
             HOSTNAME: ${{secrets.EC2_HOST}}
+      
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no  private_key ec2-user@${{ secrets.EC2_HOST }} '
-            cd ~/test-folder
-            ls -la
-  
-      - name: Copy code to EC2
-        run: scp -o StrictHostKeyChecking=no private_key -r . ec2-user@${{ secrets.EC2_HOST }}:~/test-folder
-
+          scp -o StrictHostKeyChecking=no -i private_key ec2-user@${HOSTNAME}:~/test-folder 
