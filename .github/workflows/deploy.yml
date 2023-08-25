@@ -21,7 +21,7 @@ jobs:
         with:
            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Copy code to EC2
-        run: scp -o StrictHostKeyChecking=no -r .  ec2-user@${{ secrets.EC2_HOST }}:~/test-folder
+        run: scp -o StrictHostKeyChecking=no -r *  ec2-user@${{ secrets.EC2_HOST }}:~/test-folder
       - name: SSH into EC2 and build Docker image
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'ENDSSH'
