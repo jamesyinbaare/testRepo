@@ -1,9 +1,9 @@
-name: Deploy to EC2 and Docker Build
+name: Deploy staging branch to EC2 and Docker Build
 
 on:
   push:
     branches:
-      - main
+      - staging
 
 jobs:
   Deploy:
