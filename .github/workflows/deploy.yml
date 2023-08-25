@@ -20,3 +20,16 @@ jobs:
            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Copy code to EC2
         run: scp -o StrictHostKeyChecking=no -r backend  ec2-user@${{ secrets.EC2_HOST }}:~/test-folder
+      - name: SSH into EC2 and build Docker image
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'ENDSSH'
+            cd ~/test-folder
+            ls 
+          ENDSSH
+
+      - name: SSH into EC2 and start Docker container
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'ENDSSH'
+            docker ps
+
+          ENDSSH
