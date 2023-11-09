@@ -10,26 +10,22 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository }}v${{ github.run_number}}
+  IMAGE_NAME: fastapi:v${{ github.run_number}}
 
 jobs:
 
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: |
-        echo "${{ secrets.DOCKERHUB_USERNAME }}" >> backend/.env
-        docker-compose -f backend/docker-compose.yml build --no-cache --force-rm
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Test the Docker image
+      - name: Build and test Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: "{{defaultContext}}:backend"
+          load: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Test
         run: |
-            echo "${{ secrets.DOCKERHUB_USERNAME }}" >> backend/.env
-            docker-compose -f backend/docker-compose.yml up -d
+            docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
   push_to_registry:
     name: Push Docker image to Docker Hub
@@ -47,16 +43,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: "{{defaultContext}}:backend"
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
