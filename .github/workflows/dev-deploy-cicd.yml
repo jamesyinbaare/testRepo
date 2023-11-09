@@ -10,7 +10,7 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: testrepo:v${{ github.run_number }}
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
 
@@ -28,14 +28,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Test the Docker image
         run: |
-            ls
-            cd backend/
-            echo "${{ secrets.DOCKERHUB_USERNAME }}" >> .env
-            docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} .
-
-      - name: Run tests
-        run: |
-            docker run ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} pytest
+            echo "${{ secrets.DOCKERHUB_USERNAME }}" >> backend/.env
+            docker-compose -f backend/docker-compose.yml up -d --build
 
   push_to_registry:
     name: Push Docker image to Docker Hub
