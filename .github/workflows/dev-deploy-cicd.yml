@@ -19,7 +19,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker-compose -f backend/docker-compose.yml build --no-cache --force-rm
+      run: |
+        echo "${{ secrets.DOCKERHUB_USERNAME }}" > backend/.env
+        docker-compose -f backend/docker-compose.yml build --no-cache --force-rm
   test:
     runs-on: ubuntu-latest
     steps:
