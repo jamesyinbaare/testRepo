@@ -31,7 +31,7 @@ jobs:
             ls
             cd backend/
             echo "${{ secrets.DOCKERHUB_USERNAME }}" >> .env
-            docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -f backend/Dockerfile .
+            docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -f  .
 
       - name: Run tests
         run: |
