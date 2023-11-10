@@ -9,13 +9,13 @@ jobs:
   Deploy:
     name: Deploy to EC2
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout the staging branch
         uses: actions/checkout@v3.6.0
         with:
           ref: staging
-      
+
       - name: Set up SSH key
         uses: webfactory/ssh-agent@v0.7.0
         with:
@@ -26,7 +26,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'ENDSSH'
             cd ~/test-folder
-            ls 
+            ls
           ENDSSH
 
       - name: SSH into EC2 and start Docker container

@@ -1,5 +1,4 @@
-# testRepo updated
+# Sandbox
+[![Build and Push Docker Image to Docker Hub](https://github.com/jamesyinbaare/testRepo/actions/workflows/dev-deploy-cicd.yml/badge.svg)](https://github.com/jamesyinbaare/testRepo/actions/workflows/dev-deploy-cicd.yml)
 
-## Editing the file
 
-It's a markdown file this repository

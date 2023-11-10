@@ -1,0 +1,9 @@
+services:
+  fastapi:
+    build:
+      context: .
+    env_file:
+      - .env
+    image: fastapi
+    ports:
+      - 8000:8000
