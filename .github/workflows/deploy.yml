@@ -1,0 +1,37 @@
+name: Deploy staging branch to EC2 and Docker Build
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  Deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the staging branch
+        uses: actions/checkout@v3.6.0
+        with:
+          ref: staging
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Copy code to EC2
+        run: scp -o StrictHostKeyChecking=no -r *  ec2-user@${{ secrets.EC2_HOST }}:~/test-folder
+      - name: SSH into EC2 and build Docker image
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'ENDSSH'
+            cd ~/test-folder
+            ls
+          ENDSSH
+
+      - name: SSH into EC2 and start Docker container
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'ENDSSH'
+            docker ps
+
+          ENDSSH
